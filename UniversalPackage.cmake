@@ -1,3 +1,4 @@
+find_program(AZ NAMES az.cmd)
 find_program(VSTS NAMES vsts.bat)
 
 set(UNIVERSAL_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packages")
@@ -28,15 +29,30 @@ function(download_universal_package url feed name version)
   endif()
   message(STATUS "Universal Package: ${name} ${version} downloading.")
 
-  execute_process(COMMAND "${VSTS}" package universal download
-    --instance "${url}"
-    --feed "${feed}"
-    --name "${name}"
-    --version "${version}"
-    --path "${target_dir}"
-    RESULT_VARIABLE rv
-    OUTPUT_VARIABLE o
-  )
+  if(AZ)
+    execute_process(COMMAND "${AZ}" artifacts universal download
+      --organization "${url}"
+      --feed "${feed}"
+      --name "${name}"
+      --version "${version}"
+      --path "${target_dir}"
+      RESULT_VARIABLE rv
+      OUTPUT_VARIABLE o
+    )
+  elseif(VSTS)
+    execute_process(COMMAND "${VSTS}" package universal download
+      --instance "${url}"
+      --feed "${feed}"
+      --name "${name}"
+      --version "${version}"
+      --path "${target_dir}"
+      RESULT_VARIABLE rv
+      OUTPUT_VARIABLE o
+    )
+  else()
+    message("Neither az nor vsts was not found")
+    return()
+  endif()
   if(${rv})
     message(${rv})
     return()
