@@ -1,4 +1,4 @@
-find_program(AZ NAMES az.cmd)
+find_program(AZ NAMES az az.cmd)
 find_program(VSTS NAMES vsts.bat)
 
 set(UNIVERSAL_PACKAGE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packages")
